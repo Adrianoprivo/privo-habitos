@@ -1054,6 +1054,16 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     .ctx-MARCO_OURO { background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(16, 185, 129, 0.25)); color: #fef08a; border: 1px solid rgba(234, 179, 8, 0.4); }
     .ctx-META_PARADA { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
 
+    /* PADRÃO DE BOTÃO DE AÇÃO: verde, pequeno, "＋ Ação" (ex.: Novo hábito, Nova rotina, Pesar hoje).
+       Use .btn-add em todo botão de ação fora dos formulários. Os "Salvar" dos formulários seguem largos. */
+    .btn-add {
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      background: var(--accent); color: #042f2e; border: none; border-radius: 10px;
+      padding: 8px 14px; font-size: 0.82rem; font-weight: 700; font-family: inherit;
+      line-height: 1.2; cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background 0.15s;
+    }
+    .btn-add:hover { background: var(--accent-hover); }
+
     /* Aba Hábitos simplificada */
     .habit-section-head {
       display: flex; justify-content: space-between; align-items: center;
@@ -1837,7 +1847,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <span style="font-weight: 800; color: #f1f5f9; font-size: 1.1rem;">Meus hábitos</span>
         <button type="button" class="btn-help-inline" onclick="app.openSectionHelp('habitos')" title="Entenda esta seção">?</button>
       </div>
-      <button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem;" onclick="app.openHabitModal()">＋ Novo hábito</button>
+      <button type="button" class="btn-add" onclick="app.openHabitModal()">＋ Novo hábito</button>
     </div>
     <div id="habits-full-list">
       <!-- Renderizado dinamicamente -->
@@ -1852,8 +1862,8 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <span style="font-weight: 700; color: #f1f5f9; font-size: 0.95rem;">Metas e Objetivos</span>
         <button type="button" class="btn-help-inline" onclick="app.openSectionHelp('metas')" title="Entenda esta seção">?</button>
       </div>
-      <button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem;" onclick="app.openCustomGoalModal()">
-        ＋ Nova Meta
+      <button type="button" class="btn-add" onclick="app.openCustomGoalModal()">
+        ＋ Nova meta
       </button>
     </div>
 
@@ -1870,7 +1880,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <span class="badge-pill">opcional</span>
       </div>
       <div class="muted text-xs" style="margin-bottom: 10px;">Acompanhe pesagens com gráfico e marcos de 20% em 20%.</div>
-      <button class="btn-action" onclick="app.openEditMainGoalModal()">＋ Criar meta de peso</button>
+      <button type="button" class="btn-add" onclick="app.openEditMainGoalModal()">＋ Criar meta de peso</button>
     </div>
 
     <!-- Meta Principal de Peso -->
@@ -1880,12 +1890,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           <span class="badge-pill" style="background: rgba(16, 185, 129, 0.2); color: #34d399; margin-bottom: 4px; display: inline-block;">META PRINCIPAL</span>
           <h2 class="card-title" id="weight-goal-title">Perder 20 kg</h2>
         </div>
-        <button class="btn-action" onclick="app.openWeightLogModal()">
-          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Pesar Hoje
-        </button>
+        <button type="button" class="btn-add" onclick="app.openWeightLogModal()">＋ Pesar hoje</button>
       </div>
 
       <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px;">
@@ -1976,7 +1981,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <span style="font-weight: 800; color: #f1f5f9; font-size: 1.1rem;">Fila de ideias</span>
         <button type="button" class="btn-help-inline" onclick="app.openSectionHelp('ideias')" title="Entenda esta seção">?</button>
       </div>
-      <button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem;" onclick="app.openIdeaModal()">＋ Nova ideia</button>
+      <button type="button" class="btn-add" onclick="app.openIdeaModal()">＋ Nova ideia</button>
     </div>
     <div class="muted text-xs" style="margin-bottom: 14px; line-height: 1.5;">Hábitos que você quer começar, esperando uma vaga. Só 3 ficam em formação ao mesmo tempo.</div>
 
@@ -1997,7 +2002,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           </h2>
           <div class="muted text-xs">Compromissos fixos recorrentes da semana</div>
         </div>
-        <button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem; flex-shrink: 0;" onclick="app.openWeeklyTaskModal()">＋ Nova rotina</button>
+        <button type="button" class="btn-add" onclick="app.openWeeklyTaskModal()">＋ Nova rotina</button>
       </div>
       <div id="weekly-tasks-list">
         <!-- Renderizado dinamicamente -->
@@ -2011,12 +2016,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           <h2 class="card-title">Compromissos Marcados</h2>
           <div class="muted text-xs">Eventos com data e contagem regressiva</div>
         </div>
-        <button class="btn-action" onclick="app.openEventModal()">
-          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Novo Evento
-        </button>
+        <button type="button" class="btn-add" onclick="app.openEventModal()">＋ Novo evento</button>
       </div>
       <div id="events-list">
         <!-- Renderizado dinamicamente -->
@@ -2113,7 +2113,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           </div>
           <div class="muted text-xs">Banco de frases, visualizações e ranking de aceitação</div>
         </div>
-        <button type="button" class="btn-primary-custom" style="padding: 6px 12px; font-size: 0.78rem;" onclick="app.openPhraseModal()">＋ Nova frase</button>
+        <button type="button" class="btn-add" onclick="app.openPhraseModal()">＋ Nova frase</button>
       </div>
       <div style="background: rgba(148,163,184,0.08); border: 1px dashed rgba(148,163,184,0.35); border-radius: 10px; padding: 8px 12px; margin-top: 10px; font-size: 0.74rem; color: #94a3b8; line-height: 1.45;">
         🔒 Área do administrador. Hoje qualquer pessoa que usa o app a vê; quando houver login, ela ficará visível só para você.
@@ -4101,8 +4101,8 @@ class AppState {
         </div>
 
         <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-dark); display: flex; justify-content: flex-end;">
-          <button class="btn-primary-custom" style="padding: 6px 12px; font-size: 0.78rem;" onclick="app.promoteIdeaToHabit('${idea.id}')">
-            Promover para Hábito
+          <button class="btn-add" onclick="app.promoteIdeaToHabit('${idea.id}')">
+            ＋ Promover para hábito
           </button>
         </div>
       </div>
@@ -4244,7 +4244,7 @@ class AppState {
           title: `Meta de Peso: ${mg.title || 'Peso Atual'}`,
           days: diffDays,
           action: "app.openWeightLogModal()",
-          actionText: "Pesar Agora"
+          actionText: "＋ Pesar agora"
         });
       }
     }
@@ -4258,7 +4258,7 @@ class AppState {
           title: cg.title,
           days: diffDays,
           action: `app.editCustomGoal('${cg.id}')`,
-          actionText: "Atualizar"
+          actionText: "＋ Atualizar"
         });
       }
     });
@@ -4284,9 +4284,7 @@ class AppState {
               <div style="font-weight: 700; color: #ffffff; font-size: 0.9rem;">⚠️ ${this.escape(item.title)}</div>
               <div class="muted text-xs" style="margin-top: 2px;">${item.days} dias sem novo registro de progresso</div>
             </div>
-            <button class="btn-action" style="padding: 6px 10px; font-size: 0.75rem;" onclick="${item.action}">
-              ${item.actionText}
-            </button>
+            <button type="button" class="btn-add" onclick="${item.action}">${item.actionText}</button>
           </div>
         `).join('')}
       </div>
@@ -4400,7 +4398,7 @@ class AppState {
       listEl.innerHTML = `
         <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 12px;">
           <p class="muted text-sm">Nenhum hábito ativo no momento.</p>
-          <button class="btn-primary-custom mt-3" onclick="app.switchTab('habitos')">Criar Hábitos na aba Hábitos</button>
+          <button type="button" class="btn-add mt-3" onclick="app.switchTab('habitos')">＋ Criar hábitos</button>
         </div>
       `;
       return;
@@ -4661,7 +4659,7 @@ class AppState {
     const ctaEl = document.getElementById('phrase-cta');
     if (ctaEl) {
       ctaEl.innerHTML = (context === 'META_PARADA' && goalAction)
-        ? `<button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem;" onclick="${goalAction.action}">${goalAction.actionText}</button>`
+        ? `<button type="button" class="btn-add" onclick="${goalAction.action}">${goalAction.actionText}</button>`
         : '';
     }
 
@@ -6024,7 +6022,7 @@ class AppState {
           Seus registros ficam só neste celular. Exporte e guarde o arquivo no Google Drive.
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button type="button" class="btn-primary-custom" style="padding: 8px 12px; font-size: 0.8rem;" onclick="app.exportBackup()">Exportar backup agora</button>
+          <button type="button" class="btn-add" onclick="app.exportBackup()">Exportar backup agora</button>
           <button type="button" class="btn-action" onclick="app.snoozeBackupReminder()">Lembrar amanhã</button>
         </div>
       </div>`;
@@ -6055,7 +6053,7 @@ class AppState {
           <div style="font-weight: 700; color: #34d399; font-size: 0.88rem;">🌱 Vamos começar?</div>
           <div class="muted text-xs" style="margin: 4px 0 10px;">Crie uma meta e o primeiro hábito que vai levar você até ela. Se preferir, veja antes como o app fica com exemplos.</div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button class="btn-primary-custom" style="padding: 8px 12px; font-size: 0.8rem;" onclick="app.switchTab('metas'); app.openCustomGoalModal()">Criar minha primeira meta</button>
+            <button class="btn-add" onclick="app.switchTab('metas'); app.openCustomGoalModal()">Criar minha primeira meta</button>
             <button class="btn-action" onclick="app.loadDemoData()">Ver exemplos</button>
           </div>
         </div>`;
