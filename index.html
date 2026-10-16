@@ -1970,30 +1970,17 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
   <!-- ==================== ABA 4.1: IDEIAS (FILA) ==================== -->
   <main id="tab-ideias" class="tab-content">
-    <div class="app-card">
-      <div class="card-header-flex">
-        <div>
-          <h2 class="card-title">
-            Fila de Ideias de Hábitos
-            <button type="button" class="btn-help-inline" onclick="app.openSectionHelp('ideias')" title="Entenda esta seção">?</button>
-          </h2>
-          <div class="muted text-xs">Guarde hábitos futuros para não sobrecarregar sua atenção atual</div>
-        </div>
-        <button class="btn-primary-custom" onclick="app.openIdeaModal()">
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Nova Ideia
-        </button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-weight: 800; color: #f1f5f9; font-size: 1.1rem;">Fila de ideias</span>
+        <button type="button" class="btn-help-inline" onclick="app.openSectionHelp('ideias')" title="Entenda esta seção">?</button>
       </div>
+      <button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem;" onclick="app.openIdeaModal()">＋ Nova ideia</button>
+    </div>
+    <div class="muted text-xs" style="margin-bottom: 14px; line-height: 1.5;">Hábitos que você quer começar, esperando uma vaga. Só 3 ficam em formação ao mesmo tempo.</div>
 
-      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 0.8rem; line-height: 1.45; color: #cbd5e1;">
-        💡 <strong>Estratégia de Foco:</strong> A mente humana consolida rotinas com eficácia quando focamos em no máximo <strong>3 hábitos simultâneos</strong>. Quando um hábito se formar (66 a 120 dias com ≥85%, conforme a dificuldade), você pode promover uma ideia da fila!
-      </div>
-
-      <div id="ideas-full-list">
-        <!-- Renderizado dinamicamente -->
-      </div>
+    <div id="ideas-full-list">
+      <!-- Renderizado dinamicamente -->
     </div>
   </main>
 
@@ -2510,7 +2497,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
       <div style="display: flex; gap: 10px; margin-top: 14px;">
         <button type="button" class="btn-action" style="flex: 1; justify-content: center;" onclick="app.closeModal('modal-habit-limit')">Cancelar</button>
-        <button type="button" class="btn-primary-custom" style="flex: 2; background: #f59e0b; color: #111827;" onclick="app.savePendingHabitAsIdea()">
+        <button type="button" class="btn-primary-custom" style="flex: 2; background: #f59e0b; color: #111827;" id="btn-limit-to-idea" onclick="app.savePendingHabitAsIdea()">
           Guardar na fila de ideias
         </button>
       </div>
@@ -5166,7 +5153,9 @@ class AppState {
     const formingHabits = (this.data.habits || []).filter(h => (h.status || 'em formação') === 'em formação');
     if (formingHabits.length >= 3) {
       this.pendingNewHabitTitle = '';
-      this.openModal('modal-habit-limit');
+      this.pendingHabitSnapshot = null;
+      this.pendingFromIdeaId = null;
+      this.openHabitLimitModal();
       return;
     }
 
@@ -5273,8 +5262,10 @@ class AppState {
       const formingHabits = (this.data.habits || []).filter(h => (h.status || 'em formação') === 'em formação');
       if (formingHabits.length >= 3) {
         this.pendingNewHabitTitle = name;
+        this.pendingHabitSnapshot = { name, goalId, difficulty, weeklyFreq, days, time, googleLinked };
+        this.pendingFromIdeaId = null;
         this.closeModal('modal-habit');
-        this.openModal('modal-habit-limit');
+        this.openHabitLimitModal();
         return;
       }
 
@@ -5430,26 +5421,33 @@ class AppState {
     }
   }
 
+  openHabitLimitModal() {
+    const btn = document.getElementById('btn-limit-to-idea');
+    if (btn) btn.innerText = this.pendingFromIdeaId ? 'Entendi, continua na fila' : 'Guardar na fila de ideias';
+    this.openModal('modal-habit-limit');
+  }
+
   savePendingHabitAsIdea() {
-    const title = this.pendingNewHabitTitle || 'Novo Hábito Planejado';
-    if (!this.data.ideas) this.data.ideas = [];
-    this.data.ideas.push({
-      id: 'id_' + Date.now(),
-      title,
-      notes: 'Guardado da trava de 3 hábitos em formação.'
-    });
     this.closeModal('modal-habit-limit');
-    this.save();
+    if (this.pendingFromIdeaId) {
+      // A ideia já está na fila: nada a criar
+      this.pendingFromIdeaId = null;
+      return;
+    }
     this.switchTab('ideias');
+    // Abre a janela de nova ideia, já com o que foi preenchido no hábito
+    this.openIdeaModal(this.pendingNewHabitTitle || '', this.pendingHabitSnapshot || null);
   }
 
   // GESTÃO DE IDEIAS (FILA)
-  openIdeaModal() {
+  openIdeaModal(prefillTitle = '', habitSnapshot = null) {
     document.getElementById('modal-idea-title').innerText = 'Nova Ideia de Hábito';
     document.getElementById('idea-id').value = '';
-    document.getElementById('idea-title').value = '';
+    document.getElementById('idea-title').value = typeof prefillTitle === 'string' ? prefillTitle : '';
     document.getElementById('idea-notes').value = '';
+    this.pendingIdeaSnapshot = habitSnapshot;
     this.openModal('modal-idea');
+    setTimeout(() => document.getElementById('idea-title').focus(), 50);
   }
 
   editIdea(id) {
@@ -5479,12 +5477,14 @@ class AppState {
         delete item.demo;
       }
     } else {
-      this.data.ideas.push({
-        id: 'id_' + Date.now(),
-        title,
-        notes
-      });
+      const idea = { id: 'id_' + Date.now(), title, notes };
+      // Se veio do formulário de hábito, guarda meta/horário/dias para voltar igual quando ganhar vaga
+      if (this.pendingIdeaSnapshot) idea.habitSnapshot = { ...this.pendingIdeaSnapshot, name: title };
+      this.data.ideas.push(idea);
     }
+    this.pendingIdeaSnapshot = null;
+    this.pendingNewHabitTitle = '';
+    this.pendingHabitSnapshot = null;
     this.closeModal('modal-idea');
     this.save();
   }
@@ -5503,7 +5503,9 @@ class AppState {
     const formingHabits = (this.data.habits || []).filter(h => (h.status || 'em formação') === 'em formação');
     if (formingHabits.length >= 3) {
       this.pendingNewHabitTitle = idea.title;
-      this.openModal('modal-habit-limit');
+      this.pendingHabitSnapshot = null;
+      this.pendingFromIdeaId = idea.id;
+      this.openHabitLimitModal();
       return;
     }
 
