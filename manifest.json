@@ -1,0 +1,15 @@
+{
+  "name": "Privo Hábitos — Hábitos, Metas e Agenda",
+  "short_name": "Privo Hábitos",
+  "description": "Método baseado em ciência para criar consciência e formar novos hábitos.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
