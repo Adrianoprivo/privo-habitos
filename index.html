@@ -2114,17 +2114,14 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       <div class="card-header-flex" style="flex-wrap: wrap; gap: 8px;">
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <h2 class="card-title">Administração de Frases</h2>
-            <span class="badge-pill" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; font-size: 0.65rem;">Restrita em breve</span>
+            <h2 class="card-title">Administração de frases</h2>
           </div>
-          <div class="muted text-xs">Banco de frases de identidade, métricas e ranking de aceitação</div>
+          <div class="muted text-xs">Banco de frases, visualizações e ranking de aceitação</div>
         </div>
-        <button class="btn-primary-custom" onclick="app.openPhraseModal()">
-          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Nova Frase
-        </button>
+        <button type="button" class="btn-action" style="padding: 6px 10px; font-size: 0.76rem;" onclick="app.openPhraseModal()">＋ Nova frase</button>
+      </div>
+      <div style="background: rgba(148,163,184,0.08); border: 1px dashed rgba(148,163,184,0.35); border-radius: 10px; padding: 8px 12px; margin-top: 10px; font-size: 0.74rem; color: #94a3b8; line-height: 1.45;">
+        🔒 Área do administrador. Hoje qualquer pessoa que usa o app a vê; quando houver login, ela ficará visível só para você.
       </div>
 
       <!-- KPIs do Banco de Frases -->
@@ -2148,7 +2145,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
       <!-- Dica de Variáveis -->
       <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border-dark); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; font-size: 0.75rem; color: #94a3b8; line-height: 1.45;">
-        💡 <strong>Variáveis disponíveis:</strong> <code style="color: #38bdf8;">{nome}</code> (nome do usuário), <code style="color: #38bdf8;">{dias}</code> (dias seguidos/streak), <code style="color: #38bdf8;">{aderencia}</code> (% de consistência), <code style="color: #38bdf8;">{diasParado}</code> (dias sem progresso na meta), <code style="color: #38bdf8;">{meta}</code> (nome da meta parada). Se o nome não estiver preenchido, a vírgula e o pronome são limpos automaticamente.
+        💡 <strong>Variáveis disponíveis:</strong> <code style="color: #38bdf8;">{nome}</code> (nome do usuário), <code style="color: #38bdf8;">{dias}</code> (dias seguidos), <code style="color: #38bdf8;">{aderencia}</code> (% de consistência), <code style="color: #38bdf8;">{diasParado}</code> (dias sem progresso na meta), <code style="color: #38bdf8;">{meta}</code> (nome da meta parada). Se o nome não estiver preenchido, a vírgula e o pronome são limpos automaticamente.
       </div>
 
       <!-- Ranking e Lista de Frases -->
@@ -2552,12 +2549,12 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <div class="form-group">
           <label for="phrase-context">Contexto de Exibição</label>
           <select id="phrase-context" class="form-control" required>
-            <option value="MANHA">☀️ MANHÃ / Início do dia (Padrão)</option>
-            <option value="SEQUENCIA_ALTA">🔥 SEQUÊNCIA ALTA (Streak ≥ 7 dias)</option>
-            <option value="RECAIDA">🔄 RECAÍDA (2+ dias sem check-in)</option>
-            <option value="MARCO_BRONZE">🥉 MARCO BRONZE (Hábito formado)</option>
-            <option value="MARCO_OURO">🏆 MARCO OURO (Hábito enraizado)</option>
-            <option value="META_PARADA">⚠️ META PARADA (7+ dias sem progresso)</option>
+            <option value="MANHA">☀️ Dia a dia (padrão, quando nada especial acontece)</option>
+            <option value="SEQUENCIA_ALTA">🔥 Sequência alta (7+ dias seguidos)</option>
+            <option value="RECAIDA">🔄 Recaída (2+ dias sem check-in)</option>
+            <option value="MARCO_BRONZE">🥉 Hábito formado (cumpriu o prazo)</option>
+            <option value="MARCO_OURO">🏆 Hábito enraizado (1 ano)</option>
+            <option value="META_PARADA">⚠️ Meta parada (dias sem atualizar)</option>
           </select>
         </div>
         <div class="form-group">
@@ -2778,7 +2775,7 @@ function toDateKey(date) {
 
 // Banco Padrão de Frases de Identidade: [id, contexto, texto]
 // Ao adicionar frases novas, aumente PHRASES_VERSION para que usuários antigos também as recebam.
-const PHRASES_VERSION = 3;
+const PHRASES_VERSION = 4;
 const DEFAULT_PHRASES = [
   // Dia a dia (contexto padrão)
   ['p1', 'MANHA', '{nome}, cada check-in de hoje é mais um tijolo na sua nova identidade.'],
@@ -2831,7 +2828,7 @@ const DEFAULT_PHRASES = [
   ['p52', 'RECAIDA', '{nome}, todo mundo falha. O que diferencia é voltar no dia seguinte.'],
   ['p53', 'RECAIDA', '{nome}, a corrente quebrou? Comece outra hoje. O primeiro elo é o mais importante.'],
   // Marco bronze (hábito formado)
-  ['p11', 'MARCO_BRONZE', '🥉 {nome}, 90 dias. Isso não é sorte, é caráter.'],
+  ['p11', 'MARCO_BRONZE', '🥉 {nome}, hábito formado no prazo. Isso não é sorte, é caráter.'],
   ['p12', 'MARCO_BRONZE', '🥉 {nome}, hábito formado com solidez! A fase mais dura do começo ficou para trás.'],
   ['p54', 'MARCO_BRONZE', '🥉 {nome}, hábito formado! O que antes exigia esforço agora começa a sair no automático.'],
   ['p55', 'MARCO_BRONZE', '🥉 {nome}, você provou que consegue. Que tal promover uma ideia da fila?'],
@@ -2857,12 +2854,23 @@ const OLD_STAGNANT_TEXTS = {
   p59: '{nome}, faz {diasParado} dias que sua meta não recebe notícia. Que tal registrar o progresso agora?',
   p60: '{nome}, meta esquecida não avança. Dê um passo hoje, por menor que seja.',
   p61: '{nome}, {diasParado} dias sem notícias da sua meta. Ela ainda importa para você?',
-  p62: '{nome}, um minuto para atualizar a meta já reacende o foco.'
+  p62: '{nome}, um minuto para atualizar a meta já reacende o foco.',
+  p11: '🥉 {nome}, 90 dias. Isso não é sorte, é caráter.'
 };
 
 function getDefaultPhrases() {
   return DEFAULT_PHRASES.map(([id, context, text]) => ({ id, context, text, views: 0, likes: 0, dislikes: 0 }));
 }
+
+// Nomes das etiquetas das frases, na ordem em que aparecem na Administração
+const PHRASE_CONTEXT_LABELS = {
+  MANHA: '☀️ Dia a dia',
+  SEQUENCIA_ALTA: '🔥 Sequência alta',
+  RECAIDA: '🔄 Recaída',
+  MARCO_BRONZE: '🥉 Hábito formado',
+  MARCO_OURO: '🏆 Hábito enraizado',
+  META_PARADA: '⚠️ Meta parada'
+};
 
 // Comemoração curta mostrada a cada check-in
 const CHECKIN_CHEERS = [
@@ -4774,8 +4782,21 @@ class AppState {
       return;
     }
 
+    // Etiquetas no topo: tocar mostra só as frases daquele momento
+    const filter = this.adminPhraseFilter || 'MANHA';
+    const counts = {};
+    phrases.forEach(p => { counts[p.context] = (counts[p.context] || 0) + 1; });
+    const chip = (key, label, n) => `
+      <button type="button" class="day-chip ${filter === key ? 'active' : ''}" onclick="app.setAdminPhraseFilter('${key}')">${label} <span style="opacity: 0.75;">${n}</span></button>`;
+    const chipsHtml = `
+      <div class="weekday-chips" style="margin-bottom: 14px;">
+        ${chip('ALL', 'Todas', phrases.length)}
+        ${Object.keys(PHRASE_CONTEXT_LABELS).map(k => chip(k, PHRASE_CONTEXT_LABELS[k], counts[k] || 0)).join('')}
+      </div>`;
+    const visible = filter === 'ALL' ? phrases : phrases.filter(p => p.context === filter);
+
     // Ranking ordenado pelas reações (saldo de likes vs dislikes, seguido por total de likes e views)
-    const sorted = [...phrases].sort((a, b) => {
+    const sorted = [...visible].sort((a, b) => {
       const scoreA = (a.likes || 0) - (a.dislikes || 0);
       const scoreB = (b.likes || 0) - (b.dislikes || 0);
       if (scoreB !== scoreA) return scoreB - scoreA;
@@ -4783,16 +4804,11 @@ class AppState {
       return (b.views || 0) - (a.views || 0);
     });
 
-    const contextLabels = {
-      'MANHA': '☀️ Manhã',
-      'SEQUENCIA_ALTA': '🔥 Streak Alto',
-      'RECAIDA': '🔄 Recaída',
-      'MARCO_BRONZE': '🥉 90 Dias',
-      'MARCO_OURO': '🏆 365 Dias',
-      'META_PARADA': '⚠️ Meta Parada'
-    };
+    const contextLabels = PHRASE_CONTEXT_LABELS;
 
-    listEl.innerHTML = sorted.map((p, idx) => {
+    listEl.innerHTML = chipsHtml + (sorted.length === 0
+      ? `<div class="empty-state-example">Nenhuma frase nesta etiqueta ainda.</div>`
+      : '') + sorted.map((p, idx) => {
       const score = (p.likes || 0) - (p.dislikes || 0);
       const scoreColor = score > 0 ? '#10b981' : score < 0 ? '#f87171' : '#94a3b8';
       const ctxLabel = contextLabels[p.context] || p.context;
@@ -4837,9 +4853,15 @@ class AppState {
   openPhraseModal() {
     document.getElementById('modal-phrase-title').innerText = 'Nova Frase de Identidade';
     document.getElementById('phrase-id').value = '';
-    document.getElementById('phrase-context').value = 'MANHA';
+    const f = this.adminPhraseFilter || 'MANHA';
+    document.getElementById('phrase-context').value = f === 'ALL' ? 'MANHA' : f;
     document.getElementById('phrase-text').value = '';
     this.openModal('modal-phrase');
+  }
+
+  setAdminPhraseFilter(key) {
+    this.adminPhraseFilter = key;
+    this.renderAdmin();
   }
 
   editPhrase(id) {
