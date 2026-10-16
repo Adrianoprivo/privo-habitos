@@ -1743,6 +1743,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
   <main id="tab-hoje" class="tab-content active">
     <!-- Aviso de exemplos / primeiros passos -->
     <div id="demo-banner"></div>
+    <div id="backup-banner"></div>
 
     <!-- Frase do Dia em destaque -->
     <div class="phrase-hero" id="phrase-hero">
@@ -2973,6 +2974,11 @@ const GOAL_LIBRARY = {
   }
 };
 
+// LEMBRETE DE BACKUP: enquanto os dados ficam só no celular, avisa 1x por semana para exportar.
+// Mude para false quando o app tiver login e banco de dados.
+const BACKUP_REMINDER_ENABLED = true;
+const BACKUP_REMINDER_DAYS = 7;
+
 // GOOGLE AGENDA: horários no fuso de Brasília e repetição semanal
 const GCAL_TIMEZONE = 'America/Sao_Paulo';
 const GCAL_DAY_CODES = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
@@ -3265,6 +3271,7 @@ class AppState {
   // Renderizador unificado
   render() {
     this.renderDemoBanner();
+    this.renderBackupReminder();
     this.updateDrawerCounters();
     this.renderToday();
     this.renderHabits();
@@ -5893,6 +5900,10 @@ class AppState {
   }
 
   exportBackup() {
+    this.data.lastBackupAt = toDateKey(new Date());
+    delete this.data.backupSnoozeUntil;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+    this.renderBackupReminder();
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(this.data, null, 2));
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute('href', dataStr);
@@ -5911,6 +5922,7 @@ class AppState {
         const imported = JSON.parse(e.target.result);
         if (imported && Array.isArray(imported.habits)) {
           this.data = AppState.migrate(imported);
+          if (!this.data.lastBackupAt) this.data.lastBackupAt = toDateKey(new Date());
           this.save();
           this.enforceHonestStatus();
           this.closeModal('modal-settings');
@@ -5971,6 +5983,40 @@ class AppState {
     this.data.habits.forEach(h => { if (!goalIds.has(h.goalId)) h.goalId = 'autonomous'; });
     this.closeModal('modal-settings');
     this.save();
+  }
+
+  // Aviso semanal para exportar o backup (os dados ficam só neste celular)
+  renderBackupReminder() {
+    const el = document.getElementById('backup-banner');
+    if (!el) return;
+    const hasData = (this.data.habits || []).some(h => !h.demo) || Object.keys(this.data.history || {}).length > 0;
+    const todayKey = toDateKey(new Date());
+    const last = this.data.lastBackupAt;
+    const daysSince = last ? this.daysBetweenKeys(last, todayKey) : null;
+    const snoozed = this.data.backupSnoozeUntil && this.data.backupSnoozeUntil > todayKey;
+    const isDue = daysSince === null || daysSince >= BACKUP_REMINDER_DAYS;
+    if (!BACKUP_REMINDER_ENABLED || !hasData || hasDemoItems(this.data) || snoozed || !isDue) {
+      el.innerHTML = '';
+      return;
+    }
+    el.innerHTML = `
+      <div class="app-card" style="border: 1px solid rgba(56,189,248,0.4); background: rgba(56,189,248,0.07); padding: 12px 14px;">
+        <div style="font-weight: 700; color: #7dd3fc; font-size: 0.88rem;">💾 Hora do backup semanal</div>
+        <div class="muted text-xs" style="margin: 4px 0 10px; line-height: 1.5;">
+          ${daysSince === null ? 'Você ainda não fez nenhum backup por aqui.' : `Seu último backup foi há ${daysSince} dias.`}
+          Seus registros ficam só neste celular. Exporte e guarde o arquivo no Google Drive.
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button type="button" class="btn-primary-custom" style="padding: 8px 12px; font-size: 0.8rem;" onclick="app.exportBackup()">Exportar backup agora</button>
+          <button type="button" class="btn-action" onclick="app.snoozeBackupReminder()">Lembrar amanhã</button>
+        </div>
+      </div>`;
+  }
+
+  snoozeBackupReminder() {
+    this.data.backupSnoozeUntil = this.addDaysKey(toDateKey(new Date()), 1);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
+    this.renderBackupReminder();
   }
 
   renderDemoBanner() {
