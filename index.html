@@ -1095,6 +1095,9 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     .phrase-hero-text .phrase-name {
       color: #34d399;
     }
+    .phrase-hero-text .phrase-meta {
+      color: #fbbf24;
+    }
     .phrase-hero .phrase-actions {
       display: flex;
       width: 100%;
@@ -1709,6 +1712,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     <div class="phrase-hero" id="phrase-hero">
       <div class="phrase-hero-label">✨ Frase do dia</div>
       <div class="phrase-hero-text" id="today-motivation"></div>
+      <div id="phrase-cta" style="margin-top: 12px;"></div>
       <div class="phrase-actions">
         <button type="button" class="btn-reaction" id="btn-react-like" onclick="app.reactCurrentPhrase('like')" title="Gostei desta frase">
           <span>👍</span> <span id="react-like-count">0</span>
@@ -1847,6 +1851,12 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       </button>
     </div>
 
+    <!-- Como metas e hábitos se ligam -->
+    <div style="background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.25); border-radius: 12px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.8rem; line-height: 1.5; color: #cbd5e1;">
+      🎯 <strong>Meta</strong> é onde você quer chegar. 🌱 <strong>Hábito</strong> é o que você faz todo dia para chegar lá.
+      Toda meta precisa de pelo menos um hábito trabalhando por ela — senão ela fica só no papel.
+    </div>
+
     <!-- Meta de Peso ainda não criada (opcional) -->
     <div class="app-card" id="weight-goal-empty" style="display: none;">
       <div class="card-header-flex" style="margin-bottom: 6px;">
@@ -1924,6 +1934,9 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
         <button class="btn-action" onclick="app.openEditMainGoalModal()">Editar Meta</button>
       </div>
 
+      <!-- Hábitos que trabalham esta meta -->
+      <div id="weight-goal-habits" style="margin-top: 14px;"></div>
+
       <!-- Histórico Recente de Pesagens -->
       <div style="margin-top: 16px;">
         <div class="card-header-flex">
@@ -1940,7 +1953,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     <div class="app-card">
       <div class="card-header-flex">
         <div>
-          <h2 class="card-title">Metas Adicionais</h2>
+          <h2 class="card-title">Outras metas</h2>
           <div class="muted text-xs">Objetivos com marcos e prazos</div>
         </div>
       </div>
@@ -2142,7 +2155,7 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
       <!-- Dica de Variáveis -->
       <div style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border-dark); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; font-size: 0.75rem; color: #94a3b8; line-height: 1.45;">
-        💡 <strong>Variáveis disponíveis:</strong> <code style="color: #38bdf8;">{nome}</code> (nome do usuário), <code style="color: #38bdf8;">{dias}</code> (dias seguidos/streak), <code style="color: #38bdf8;">{aderencia}</code> (% de consistência), <code style="color: #38bdf8;">{diasParado}</code> (dias sem progresso na meta). Se o nome não estiver preenchido, a vírgula e o pronome são limpos automaticamente.
+        💡 <strong>Variáveis disponíveis:</strong> <code style="color: #38bdf8;">{nome}</code> (nome do usuário), <code style="color: #38bdf8;">{dias}</code> (dias seguidos/streak), <code style="color: #38bdf8;">{aderencia}</code> (% de consistência), <code style="color: #38bdf8;">{diasParado}</code> (dias sem progresso na meta), <code style="color: #38bdf8;">{meta}</code> (nome da meta parada). Se o nome não estiver preenchido, a vírgula e o pronome são limpos automaticamente.
       </div>
 
       <!-- Ranking e Lista de Frases -->
@@ -2244,6 +2257,18 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
           <button type="submit" class="btn-primary-custom" style="flex: 2;">Salvar Hábito</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: Ligar hábito existente a uma meta -->
+  <div id="modal-link-habit" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="card-header-flex">
+        <h3 class="card-title">Qual hábito trabalha esta meta?</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-link-habit')">✕</button>
+      </div>
+      <div class="muted text-xs" style="margin-bottom: 12px;">Meta: <strong id="link-habit-goal-title" style="color: #fbbf24;"></strong></div>
+      <div id="link-habit-list"></div>
     </div>
   </div>
 
@@ -2759,7 +2784,7 @@ function toDateKey(date) {
 
 // Banco Padrão de Frases de Identidade: [id, contexto, texto]
 // Ao adicionar frases novas, aumente PHRASES_VERSION para que usuários antigos também as recebam.
-const PHRASES_VERSION = 2;
+const PHRASES_VERSION = 3;
 const DEFAULT_PHRASES = [
   // Dia a dia (contexto padrão)
   ['p1', 'MANHA', '{nome}, cada check-in de hoje é mais um tijolo na sua nova identidade.'],
@@ -2823,13 +2848,23 @@ const DEFAULT_PHRASES = [
   ['p57', 'MARCO_OURO', '🏆 {nome}, um ano de constância. Isso já faz parte de quem você é.'],
   ['p58', 'MARCO_OURO', '🏆 {nome}, hábito enraizado. Agora ele trabalha por você.'],
   // Meta parada
-  ['p15', 'META_PARADA', '{nome}, sua meta está te esperando há {diasParado} dias. Um registro pequeno já reacende o jogo.'],
-  ['p16', 'META_PARADA', '{nome}, são {diasParado} dias sem atualizar a meta. Que tal um microavanço agora para reacender o foco?'],
-  ['p59', 'META_PARADA', '{nome}, faz {diasParado} dias que sua meta não recebe notícia. Que tal registrar o progresso agora?'],
-  ['p60', 'META_PARADA', '{nome}, meta esquecida não avança. Dê um passo hoje, por menor que seja.'],
-  ['p61', 'META_PARADA', '{nome}, {diasParado} dias sem notícias da sua meta. Ela ainda importa para você?'],
-  ['p62', 'META_PARADA', '{nome}, um minuto para atualizar a meta já reacende o foco.']
+  ['p15', 'META_PARADA', '{nome}, sua meta "{meta}" está te esperando há {diasParado} dias. Um registro pequeno já reacende o jogo.'],
+  ['p16', 'META_PARADA', '{nome}, são {diasParado} dias sem atualizar "{meta}". Que tal um microavanço agora para reacender o foco?'],
+  ['p59', 'META_PARADA', '{nome}, faz {diasParado} dias que "{meta}" não recebe notícia. Que tal registrar o progresso agora?'],
+  ['p60', 'META_PARADA', '{nome}, "{meta}" não avança sozinha. Dê um passo hoje, por menor que seja.'],
+  ['p61', 'META_PARADA', '{nome}, {diasParado} dias sem notícias de "{meta}". Ela ainda importa para você?'],
+  ['p62', 'META_PARADA', '{nome}, um minuto para atualizar "{meta}" já reacende o foco.']
 ];
+
+// Textos antigos (versão 2) das frases de meta parada, para atualizar quem já usa
+const OLD_STAGNANT_TEXTS = {
+  p15: '{nome}, sua meta está te esperando há {diasParado} dias. Um registro pequeno já reacende o jogo.',
+  p16: '{nome}, são {diasParado} dias sem atualizar a meta. Que tal um microavanço agora para reacender o foco?',
+  p59: '{nome}, faz {diasParado} dias que sua meta não recebe notícia. Que tal registrar o progresso agora?',
+  p60: '{nome}, meta esquecida não avança. Dê um passo hoje, por menor que seja.',
+  p61: '{nome}, {diasParado} dias sem notícias da sua meta. Ela ainda importa para você?',
+  p62: '{nome}, um minuto para atualizar a meta já reacende o foco.'
+};
 
 function getDefaultPhrases() {
   return DEFAULT_PHRASES.map(([id, context, text]) => ({ id, context, text, views: 0, likes: 0, dislikes: 0 }));
@@ -3133,7 +3168,13 @@ class AppState {
           if (!parsed.phraseReactions) parsed.phraseReactions = {};
           if ((parsed.phrasesVersion || 1) < PHRASES_VERSION) {
             const existingIds = new Set(parsed.phrases.map(p => p.id));
-            getDefaultPhrases().forEach(p => { if (!existingIds.has(p.id)) parsed.phrases.push(p); });
+            const defaults = getDefaultPhrases();
+            defaults.forEach(p => { if (!existingIds.has(p.id)) parsed.phrases.push(p); });
+            parsed.phrases.forEach(p => {
+              if (OLD_STAGNANT_TEXTS[p.id] && p.text === OLD_STAGNANT_TEXTS[p.id]) {
+                p.text = defaults.find(d => d.id === p.id).text;
+              }
+            });
             parsed.phrasesVersion = PHRASES_VERSION;
           }
 
@@ -3686,7 +3727,7 @@ class AppState {
                   <!-- VÍNCULO DA META EXIBIDO NO CARD -->
                   <div style="margin-top: 4px; font-size: 0.74rem;">
                     ${goalInfo.isAutonomous ? `
-                      <span class="badge-pill" style="background: rgba(255,255,255,0.06); color: #94a3b8;">🎯 Autônomo (sem meta)</span>
+                      <button type="button" class="badge-pill" style="background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px dashed rgba(245,158,11,0.45); cursor: pointer;" onclick="event.stopPropagation(); app.editHabit('${h.id}')" title="Escolher a meta que este hábito trabalha">🎯 Sem meta — escolher</button>
                     ` : `
                       <span class="badge-pill" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
                         🎯 Serve a: <strong>${this.escape(goalInfo.title)}</strong>
@@ -3786,6 +3827,8 @@ class AppState {
 
     // Título e dados
     document.getElementById('weight-goal-title').innerText = mg.title || 'Perder 20 kg';
+    const weightHabitsEl = document.getElementById('weight-goal-habits');
+    if (weightHabitsEl) weightHabitsEl.innerHTML = this.renderGoalHabitsHtml('main_goal');
     document.getElementById('weight-current-val').innerHTML = `${mg.currentWeight.toFixed(1)} <span class="text-sm font-normal muted">kg</span>`;
     document.getElementById('weight-target-val').innerText = `${mg.targetWeight.toFixed(1)} kg`;
 
@@ -3882,6 +3925,71 @@ class AppState {
     this.renderCustomGoals();
   }
 
+  // Lista os hábitos que trabalham uma meta (ou avisa que nenhum trabalha)
+  renderGoalHabitsHtml(goalId) {
+    const linked = (this.data.habits || []).filter(h => h.goalId === goalId);
+    if (linked.length === 0) {
+      return `
+        <div style="background: rgba(245,158,11,0.08); border: 1px dashed rgba(245,158,11,0.4); border-radius: 10px; padding: 10px 12px;">
+          <div style="font-size: 0.8rem; color: #fbbf24; font-weight: 700;">⚠️ Nenhum hábito trabalha esta meta ainda</div>
+          <div class="muted text-xs" style="margin: 3px 0 8px;">Sem um hábito diário, a meta não sai do papel.</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button type="button" class="btn-action" style="padding: 6px 10px; font-size: 0.76rem;" onclick="app.openLinkHabitModal('${goalId}')">🔗 Ligar um hábito que já tenho</button>
+            <button type="button" class="btn-action" style="padding: 6px 10px; font-size: 0.76rem;" onclick="app.openHabitModalForGoal('${goalId}')">＋ Criar hábito para esta meta</button>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="muted text-xs" style="margin-bottom: 6px; font-weight: 700;">🌱 Hábitos que trabalham esta meta:</div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        ${linked.map(h => `<span class="badge-pill" style="background: rgba(16,185,129,0.14); color: #34d399; border: 1px solid rgba(16,185,129,0.3);">${this.escape(h.name)}</span>`).join('')}
+        <button type="button" class="btn-icon" style="font-size: 0.74rem; padding: 2px 6px;" onclick="app.openLinkHabitModal('${goalId}')" title="Ligar outro hábito">＋ ligar</button>
+      </div>`;
+  }
+
+  // Abre o formulário de novo hábito já apontando para a meta
+  openHabitModalForGoal(goalId) {
+    this.openHabitModal();
+    const select = document.getElementById('habit-goal-id');
+    if (select && document.getElementById('modal-habit').classList.contains('open')) {
+      select.value = goalId;
+      this.onHabitGoalChange();
+    }
+  }
+
+  // Escolher um hábito existente para servir a uma meta
+  openLinkHabitModal(goalId) {
+    this.linkingGoalId = goalId;
+    const goalInfo = this.getHabitGoalInfo(goalId);
+    document.getElementById('link-habit-goal-title').innerText = goalInfo.title;
+    const habits = (this.data.habits || []).filter(h => h.goalId !== goalId);
+    const listEl = document.getElementById('link-habit-list');
+    listEl.innerHTML = habits.length === 0
+      ? `<div class="empty-state-example">Todos os seus hábitos já trabalham esta meta.</div>`
+      : habits.map(h => {
+          const current = this.getHabitGoalInfo(h.goalId);
+          return `
+            <button type="button" class="check-item" style="width: 100%; text-align: left;" onclick="app.linkHabitToGoal('${h.id}')">
+              <div class="item-left">
+                <div style="min-width: 0;">
+                  <div class="item-title">${this.escape(h.name)}</div>
+                  <div class="item-meta">${current.isAutonomous ? 'hoje: sem meta' : 'hoje serve a: ' + this.escape(current.title)}</div>
+                </div>
+              </div>
+              <span class="text-accent" style="font-weight: 700; font-size: 0.8rem;">Ligar</span>
+            </button>`;
+        }).join('');
+    this.openModal('modal-link-habit');
+  }
+
+  linkHabitToGoal(habitId) {
+    const h = (this.data.habits || []).find(x => x.id === habitId);
+    if (!h || !this.linkingGoalId) return;
+    h.goalId = this.linkingGoalId;
+    this.closeModal('modal-link-habit');
+    this.save();
+  }
+
   // Gráfico SVG estilizado da evolução do peso
   renderWeightChart(logs, targetWeight) {
     const container = document.getElementById('weight-chart-container');
@@ -3970,6 +4078,7 @@ class AppState {
           <div style="height: 6px; background: #374151; border-radius: 9999px; margin-top: 10px; overflow: hidden;">
             <div style="width: ${pct}%; height: 100%; background: #06b6d4;"></div>
           </div>
+          <div style="margin-top: 10px;">${this.renderGoalHabitsHtml(cg.id)}</div>
         </div>
       `;
     }).join('');
@@ -4420,6 +4529,7 @@ class AppState {
     // 1. Meta Parada (7+ dias sem progresso)
     const threshold = this.data.stagnantDaysThreshold || 7;
     let maxStagnantDays = 0;
+    let stagnantGoal = null;
     const today = new Date();
 
     const mg = this.data.mainGoal;
@@ -4427,17 +4537,23 @@ class AppState {
       const sortedLogs = [...mg.logs].sort((a, b) => new Date(b.date) - new Date(a.date));
       const lastDate = new Date(sortedLogs[0].date + 'T00:00:00');
       const diff = Math.floor((today - lastDate) / 86400000);
-      if (diff >= threshold && diff > maxStagnantDays) maxStagnantDays = diff;
+      if (diff >= threshold && diff > maxStagnantDays) {
+        maxStagnantDays = diff;
+        stagnantGoal = { title: mg.title || 'Meta de peso', action: 'app.openWeightLogModal()', actionText: '⚖️ Registrar peso agora' };
+      }
     }
 
     (this.data.customGoals || []).forEach(cg => {
       const lastUpdate = cg.lastUpdated ? new Date(cg.lastUpdated + 'T00:00:00') : new Date(Date.now() - 10 * 86400000);
       const diff = Math.floor((today - lastUpdate) / 86400000);
-      if (diff >= threshold && diff > maxStagnantDays) maxStagnantDays = diff;
+      if (diff >= threshold && diff > maxStagnantDays) {
+        maxStagnantDays = diff;
+        stagnantGoal = { title: cg.title, action: `app.editCustomGoal('${cg.id}')`, actionText: '📈 Atualizar progresso' };
+      }
     });
 
     if (maxStagnantDays >= threshold) {
-      return { context: 'META_PARADA', diasParado: maxStagnantDays };
+      return { context: 'META_PARADA', diasParado: maxStagnantDays, meta: stagnantGoal.title, goalAction: stagnantGoal };
     }
 
     // 2. Recaída (2+ dias consecutivos anteriores sem check-in em nenhum hábito)
@@ -4495,10 +4611,12 @@ class AppState {
     const dias = vars.dias !== undefined ? vars.dias : this.calcOverallStreak();
     const adh = vars.aderencia !== undefined ? vars.aderencia : this.calcPeriodAdherence(7);
     const diasParado = vars.diasParado !== undefined ? vars.diasParado : 7;
+    const meta = vars.meta || 'sua meta';
 
     text = text.replace(/{dias}/g, dias)
                .replace(/{aderencia}/g, adh)
-               .replace(/{diasParado}/g, diasParado);
+               .replace(/{diasParado}/g, diasParado)
+               .replace(/{meta}/g, meta);
 
     return text;
   }
@@ -4518,7 +4636,7 @@ class AppState {
       return;
     }
 
-    const { context, dias, diasParado } = this.determineCurrentContext();
+    const { context, dias, diasParado, meta, goalAction } = this.determineCurrentContext();
     const adh = this.calcPeriodAdherence(7);
 
     // Se mudou o dia ou a frase atual não existe, sorteia do contexto ativo
@@ -4539,7 +4657,7 @@ class AppState {
     }
 
     // Texto formatado
-    const formatted = this.formatPhraseText(currentPhrase.text, { dias, aderencia: adh, diasParado });
+    const formatted = this.formatPhraseText(currentPhrase.text, { dias, aderencia: adh, diasParado, meta });
     let html = this.escape(formatted);
     const name = (this.data.userName || '').trim();
     if (name) {
@@ -4552,7 +4670,17 @@ class AppState {
       motivationEl.classList.add('phrase-enter');
       motivationEl.dataset.phraseId = currentPhrase.id;
     }
+    if (meta) {
+      const safeMeta = this.escape(meta);
+      html = html.split(safeMeta).join(`<span class="phrase-meta">${safeMeta}</span>`);
+    }
     motivationEl.innerHTML = html;
+    const ctaEl = document.getElementById('phrase-cta');
+    if (ctaEl) {
+      ctaEl.innerHTML = (context === 'META_PARADA' && goalAction)
+        ? `<button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem;" onclick="${goalAction.action}">${goalAction.actionText}</button>`
+        : '';
+    }
 
     // Atualiza botões e contagens de reações
     const currentReaction = (this.data.phraseReactions || {})[currentPhrase.id];
