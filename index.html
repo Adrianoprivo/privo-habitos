@@ -1054,6 +1054,42 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
     .ctx-MARCO_OURO { background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(16, 185, 129, 0.25)); color: #fef08a; border: 1px solid rgba(234, 179, 8, 0.4); }
     .ctx-META_PARADA { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
 
+    /* Aba Hábitos simplificada */
+    .habit-section-head {
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 700; color: #f1f5f9; font-size: 0.92rem; margin-bottom: 10px;
+    }
+    .habit-slots-pill {
+      font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .habit-slots-pill.over { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); }
+    .habit-compact {
+      background: var(--surface-dark); border: 1px solid var(--border-dark); border-radius: 14px;
+      padding: 12px; margin-bottom: 8px;
+    }
+    .habit-compact.open { border-color: rgba(16, 185, 129, 0.35); }
+    .habit-compact-main { display: flex; gap: 12px; align-items: flex-start; }
+    .habit-compact-title { font-weight: 700; color: #ffffff; font-size: 0.95rem; line-height: 1.3; overflow-wrap: anywhere; }
+    .habit-compact-bar { height: 6px; background: #1f2937; border-radius: 9999px; overflow: hidden; margin: 8px 0 4px; }
+    .habit-compact-bar > div { height: 100%; border-radius: 9999px; }
+    .habit-compact-details { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-dark); }
+    .habit-mini-stat { background: rgba(0, 0, 0, 0.2); padding: 6px; border-radius: 8px; font-size: 0.85rem; }
+    .habit-slot-empty {
+      width: 100%; display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 14px; margin-bottom: 8px; border-radius: 14px; cursor: pointer;
+      background: transparent; border: 1px dashed rgba(255, 255, 255, 0.18); color: #cbd5e1; font-family: inherit;
+    }
+    .habit-slot-empty:hover { border-color: var(--accent); color: #34d399; }
+    .habit-section-fold { border-top: 1px solid var(--border-dark); padding: 2px 0; }
+    .habit-section-fold > summary, .habit-section-link {
+      display: flex; justify-content: space-between; align-items: center; width: 100%;
+      padding: 12px 0; cursor: pointer; list-style: none; color: #f1f5f9; font-weight: 600; font-size: 0.9rem;
+      background: transparent; border: none; font-family: inherit; text-align: left;
+    }
+    .habit-section-fold > summary::-webkit-details-marker { display: none; }
+    .habit-section-link { border-top: 1px solid var(--border-dark); }
+
     /* Frase do Dia em destaque */
     .phrase-hero {
       position: relative;
@@ -1795,46 +1831,15 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
 
   <!-- ==================== ABA 2: HÁBITOS ==================== -->
   <main id="tab-habitos" class="tab-content">
-    <!-- TRILHA DA JORNADA (HORIZONTAL NO TOPO) -->
-    <div class="journey-overview">
-      <div class="journey-overview-header">
-        <div style="font-size: 0.82rem; font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 6px;">
-          <span>🧭</span> Trilha da Jornada de Hábitos
-        </div>
-        <span class="muted text-xs">4 estágios científicos</span>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-weight: 800; color: #f1f5f9; font-size: 1.1rem;">Meus hábitos</span>
+        <button type="button" class="btn-help-inline" onclick="app.openSectionHelp('habitos')" title="Entenda esta seção">?</button>
       </div>
-      <div class="journey-stages-track" id="journey-stages-overview">
-        <!-- Renderizado dinamicamente com contadores -->
-      </div>
+      <button type="button" class="btn-primary-custom" style="padding: 8px 14px; font-size: 0.82rem;" onclick="app.openHabitModal()">＋ Novo hábito</button>
     </div>
-
-    <div class="app-card">
-      <div class="card-header-flex" style="flex-wrap: wrap; gap: 8px;">
-        <div>
-          <h2 class="card-title">
-            Gerenciar Hábitos
-            <button type="button" class="btn-help-inline" onclick="app.openSectionHelp('habitos')" title="Entenda esta seção">?</button>
-          </h2>
-          <div class="muted text-xs">Rotinas diárias para construir consistência</div>
-        </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="btn-action" onclick="app.openOrganizeModal()" title="Organizar hábitos em formação, consolidados e fila de ideias">
-            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h10M4 18h7"/>
-            </svg>
-            Organizar hábitos
-          </button>
-          <button class="btn-primary-custom" onclick="app.openHabitModal()">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Novo Hábito
-          </button>
-        </div>
-      </div>
-      <div id="habits-full-list">
-        <!-- Renderizado dinamicamente -->
-      </div>
+    <div id="habits-full-list">
+      <!-- Renderizado dinamicamente -->
     </div>
   </main>
 
@@ -2526,7 +2531,8 @@ table.shell-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 
       </div>
 
       <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.5; color: #ecfdf5;">
-        A regra de <strong>3 hábitos em formação</strong> vale para todos, inclusive os que vieram de fábrica. Escolha quais 3 ficam em formação:
+        Só <strong>3 hábitos</strong> cabem em formação ao mesmo tempo — é o que a ciência mostra que dá para fazer com qualidade. Os outros esperam na <strong>fila de ideias</strong> e voltam quando abrir vaga.<br><br>
+        Um hábito só vira <strong>consolidado</strong> quando cumpre o prazo da dificuldade (66, 90 ou 120 dias) com pelo menos 85% de execução. O app reconhece isso sozinho.
       </div>
 
       <div id="organize-habits-list">
@@ -3355,6 +3361,8 @@ class AppState {
           const streakInfo = this.calcHabitStreakInfo(h);
           const goalInfo = this.getHabitGoalInfo(h.goalId);
           const isDueToday = this.isHabitDueOn(h, todayKey);
+          const yesterdayKey = this.addDaysKey(todayKey, -1);
+          const missedYesterday = !isDone && this.isHabitDueOn(h, yesterdayKey) && !this.isHabitDoneOn(h.id, yesterdayKey);
           let dueTag = '';
           if (!isDone && !isDueToday) {
             dueTag = weekProgress.done >= weekProgress.target
@@ -3387,6 +3395,7 @@ class AppState {
                     <span>🔥 ${this.formatStreak(streakInfo.current, streakInfo.unit)} seguidos</span>
                     ${dueTag}
                   </div>
+                  ${missedYesterday ? `<div class="text-xs" style="margin-top: 4px; color: #fbbf24;">↺ Ontem ficou para trás — tudo bem. O que importa é não falhar dois dias seguidos.</div>` : ''}
                 </div>
               </div>
             </div>
@@ -3665,152 +3674,129 @@ class AppState {
   }
 
   renderHabits() {
-    this.renderJourneyOverview();
-
     const habits = this.data.habits || [];
     const listEl = document.getElementById('habits-full-list');
     if (!listEl) return;
 
-    // Checa marcos para cada hábito
+    // Checa marcos (consolidação só por execução real)
     habits.forEach(h => this.checkHabitMilestones(h));
 
-    if (habits.length === 0) {
-      listEl.innerHTML = `
-        <div style="text-align: center; padding: 30px 10px;">
-          <p class="muted text-sm">Você ainda não tem hábitos criados.</p>
-          <button class="btn-primary-custom mt-3" onclick="app.openHabitModal()">Adicionar Primeiro Hábito</button>
-        </div>
-      `;
-      return;
+    const forming = habits.filter(h => (h.status || 'em formação') === 'em formação');
+    const consolidated = habits.filter(h => h.status === 'formado' || h.status === 'enraizado');
+    const ideasCount = (this.data.ideas || []).length;
+    const todayKey = toDateKey(new Date());
+    const overLimit = forming.length > 3;
+
+    const slotsHtml = [];
+    for (let i = forming.length; i < 3; i++) {
+      slotsHtml.push(`
+        <button type="button" class="habit-slot-empty" onclick="${ideasCount > 0 ? "app.switchTab('ideias')" : 'app.openHabitModal()'}">
+          <span style="font-weight: 700;">Vaga livre</span>
+          <span class="muted text-xs">${ideasCount > 0 ? 'Promover uma ideia da fila' : '＋ Adicionar hábito'}</span>
+        </button>`);
     }
 
-    const todayKey = toDateKey(new Date());
-    const todayHist = (this.data.history && this.data.history[todayKey]) ? this.data.history[todayKey] : {};
-
-    listEl.innerHTML = habits.map(h => {
-      const isDoneToday = !!todayHist[h.id];
-      const streakInfo = this.calcHabitStreakInfo(h);
-      const streak = this.formatStreak(streakInfo.current, streakInfo.unit);
-      const bestStreak = this.formatStreak(streakInfo.best, streakInfo.unit);
-      const weekProgress = this.calcHabitWeekProgress(h);
-      const tracking = this.calcHabitTrackingStats(h);
-      const statusBadge = this.getHabitStatusBadgeHtml(h);
-      const goalInfo = this.getHabitGoalInfo(h.goalId);
-
-      // Barra Linha de Atingimento calibrada pelo nível de dificuldade
-      const targetDays = tracking.targetDays;
-      const progressTargetPct = Math.min(100, Math.round((tracking.daysTracked / targetDays) * 100));
-      const diffBadge = this.getHabitDifficultyBadgeHtml(h.difficulty || 'medium');
-
-      // Estágio atual da jornada para este hábito
-      const st = h.status || 'em formação';
-      const isForming = st === 'em formação';
-      const isFormed = st === 'formado';
-      const isRooted = st === 'enraizado';
-
-      return `
-        <div class="app-card" style="margin-bottom: 14px; background: #1a2234;">
-          <div class="habit-card-top">
-            <div class="habit-card-info" style="cursor: pointer;" onclick="app.toggleHabit('${h.id}', '${todayKey}')">
-              <div style="display: flex; align-items: flex-start; gap: 10px;">
-                <div class="check-circle" style="flex-shrink: 0; margin-top: 2px; ${isDoneToday ? 'background: var(--accent); border-color: var(--accent);' : ''}">
-                  ${isDoneToday ? `<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#ffffff" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>` : ''}
-                </div>
-                <div style="flex: 1; min-width: 0;">
-                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                    <h3 class="habit-card-title">${this.escape(h.name)}</h3>
-                    ${h.googleLinked ? `<span title="Vinculado ao Google Agenda" style="font-size: 0.85rem; flex-shrink: 0;">🔗</span>` : ''}
-                    ${statusBadge}
-                    ${diffBadge}
-                  </div>
-
-                  <!-- VÍNCULO DA META EXIBIDO NO CARD -->
-                  <div style="margin-top: 4px; font-size: 0.74rem;">
-                    ${goalInfo.isAutonomous ? `
-                      <button type="button" class="badge-pill" style="background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px dashed rgba(245,158,11,0.45); cursor: pointer;" onclick="event.stopPropagation(); app.editHabit('${h.id}')" title="Escolher a meta que este hábito trabalha">🎯 Sem meta — escolher</button>
-                    ` : `
-                      <span class="badge-pill" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                        🎯 Serve a: <strong>${this.escape(goalInfo.title)}</strong>
-                      </span>
-                    `}
-                  </div>
-
-                  <div class="item-meta">
-                    <span class="time-badge-clock">${h.time ? `⏰ ${h.time}` : '⏰ definir'}</span>
-                    <span>Meta: ${h.weeklyFreq || 7}x/semana</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="habit-card-actions">
-              ${h.time ? `
-              <a class="btn-icon" target="_blank" rel="noopener" title="Adicionar lembrete repetido no Google Agenda"
-                 href="${buildGcalUrl({ title: h.name, details: 'Hábito do Privo Hábitos. Faça o check-in no app depois de concluir.', time: h.time, durationMin: 30, days: h.days || defaultDaysForFreq(h.weeklyFreq || 7) })}"
-                 onclick="app.markGoogleLinked('habits', '${h.id}')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-              </a>` : ''}
-              <button class="btn-icon" title="Editar" onclick="app.editHabit('${h.id}')">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-              </button>
-              <button class="btn-icon" title="Excluir" onclick="app.deleteHabit('${h.id}')">
-                <svg width="16" height="16" fill="none" stroke="#f87171" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- TRILHA DA JORNADA DO HÁBITO COM ESTÁGIO ATUAL DESTACADO -->
-          <div class="habit-journey-strip" title="Estágio do hábito na jornada">
-            <div class="h-strip-step">💡 Ideia</div>
-            <div class="h-strip-arrow">→</div>
-            <div class="h-strip-step ${isForming ? 'active step-formando' : ''}">🌱 Em formação</div>
-            <div class="h-strip-arrow">→</div>
-            <div class="h-strip-step ${isFormed ? 'active step-formado' : ''}">🥉 Formado</div>
-            <div class="h-strip-arrow">→</div>
-            <div class="h-strip-step ${isRooted ? 'active step-enraizado' : ''}">🏆 Enraizado</div>
-          </div>
-
-          <!-- Linha de Atingimento Calibrada -->
-          <div style="margin-top: 10px; padding: 10px 12px; background: rgba(0,0,0,0.25); border-radius: 10px;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 0.72rem;">
-              <span class="muted">Linha de consolidação: <strong>${tracking.daysTracked}/${targetDays} dias</strong></span>
-              <span>Execução: <strong style="color: ${tracking.adherenceRate >= 85 ? '#34d399' : '#f59e0b'};">${tracking.adherenceRate}%</strong> (meta: ≥85%)</span>
-            </div>
-
-            <div class="reach-track">
-              <div class="reach-fill" style="width: ${progressTargetPct}%;"></div>
-              <div class="reach-tick" style="left: 25%;" data-label="25%"></div>
-              <div class="reach-tick" style="left: 50%;" data-label="50%"></div>
-              <div class="reach-tick" style="left: 75%;" data-label="75%"></div>
-              <div class="reach-tick" style="left: 100%;" data-label="100%"></div>
-            </div>
-
-            <div style="height: 12px;"></div>
-
-            ${tracking.isWarningRecent ? `
-              <div class="habit-alert-tag">
-                ⚠️ Execução dos últimos 14 dias em ${tracking.recentAdherenceRate}% (abaixo da linha de 85% — atenção)
-              </div>
-            ` : ''}
-          </div>
-
-          <!-- Estatísticas Semana e Streak -->
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; text-align: center;">
-            <div style="background: rgba(0,0,0,0.2); padding: 6px; border-radius: 8px;">
-              <div class="muted text-xs">Semana Atual</div>
-              <div style="font-weight: 700; color: #38bdf8;">${weekProgress.done}/${weekProgress.target}</div>
-            </div>
-            <div style="background: rgba(0,0,0,0.2); padding: 6px; border-radius: 8px;">
-              <div class="muted text-xs">Streak Atual</div>
-              <div style="font-weight: 700; color: #f59e0b;">🔥 ${streak}</div>
-            </div>
-            <div style="background: rgba(0,0,0,0.2); padding: 6px; border-radius: 8px;">
-              <div class="muted text-xs">Melhor</div>
-              <div style="font-weight: 700; color: #34d399;">🏆 ${bestStreak}</div>
-            </div>
-          </div>
+    listEl.innerHTML = `
+      <div class="habit-section-head">
+        <span>🌱 Em formação</span>
+        <span class="habit-slots-pill ${overLimit ? 'over' : ''}">${forming.length} de 3 vagas</span>
+      </div>
+      ${overLimit ? `
+        <div class="habit-alert-tag" style="display: flex; margin: 0 0 10px; padding: 10px 12px; font-size: 0.8rem; line-height: 1.4;">
+          ⚠️ Há ${forming.length} hábitos em formação. Só 3 cabem ao mesmo tempo. Escolha qual espera na fila de ideias.
         </div>
-      `;
-    }).join('');
+        <button type="button" class="btn-primary-custom" style="width: 100%; margin-bottom: 12px;" onclick="app.openOrganizeModal()">Escolher quem fica em formação</button>
+      ` : ''}
+      ${forming.map(h => this.renderHabitCompactCard(h, todayKey)).join('')}
+      ${slotsHtml.join('')}
+      ${forming.length > 0 && !overLimit ? `
+        <button type="button" class="btn-icon" style="margin: 2px 0 14px; font-size: 0.78rem;" onclick="app.openOrganizeModal()">⇄ Trocar quem está em formação</button>` : ''}
+
+      <details class="habit-section-fold" ${consolidated.length === 0 ? '' : ''}>
+        <summary>
+          <span>🥉 Consolidados <span class="muted text-xs">· não ocupam vaga</span></span>
+          <span class="muted">${consolidated.length} ▾</span>
+        </summary>
+        <div style="padding: 8px 0 4px;">
+          ${consolidated.length === 0
+            ? `<div class="muted text-xs" style="line-height: 1.5;">Nenhum ainda. Um hábito se consolida sozinho quando cumpre o prazo da dificuldade (66, 90 ou 120 dias) com pelo menos 85% de execução.</div>`
+            : consolidated.map(h => this.renderHabitCompactCard(h, todayKey)).join('')}
+        </div>
+      </details>
+
+      <button type="button" class="habit-section-link" onclick="app.switchTab('ideias')">
+        <span>💡 Fila de ideias <span class="muted text-xs">· esperando vaga</span></span>
+        <span class="muted">${ideasCount} ›</span>
+      </button>
+    `;
+  }
+
+  // Cartão compacto do hábito: o essencial à vista, o resto ao tocar
+  renderHabitCompactCard(h, todayKey) {
+    const isDoneToday = this.isHabitDoneOn(h.id, todayKey);
+    const tracking = this.calcHabitTrackingStats(h);
+    const streakInfo = this.calcHabitStreakInfo(h);
+    const weekProgress = this.calcHabitWeekProgress(h);
+    const goalInfo = this.getHabitGoalInfo(h.goalId);
+    const isConsolidated = h.status === 'formado' || h.status === 'enraizado';
+    const isOpen = this.expandedHabitId === h.id;
+    const pct = Math.min(100, Math.round((tracking.daysTracked / tracking.targetDays) * 100));
+    const isWarning = !isConsolidated && tracking.isWarningRecent;
+    const days = Array.isArray(h.days) && h.days.length ? h.days : defaultDaysForFreq(h.weeklyFreq || 7);
+
+    return `
+      <div class="habit-compact ${isOpen ? 'open' : ''}">
+        <div class="habit-compact-main">
+          <button type="button" class="check-circle" style="padding: 0; cursor: pointer; ${isDoneToday ? 'background: var(--accent); border-color: var(--accent);' : 'background: transparent;'}" onclick="app.toggleHabit('${h.id}', '${todayKey}')" title="${isDoneToday ? 'Desmarcar hoje' : 'Marcar como feito hoje'}">
+            ${isDoneToday ? '<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#ffffff" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+          </button>
+          <div style="flex: 1; min-width: 0; cursor: pointer;" onclick="app.toggleHabitDetails('${h.id}')">
+            <div style="display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+              <span class="habit-compact-title">${this.escape(h.name)} ${h.status === 'enraizado' ? '🏆' : h.status === 'formado' ? '🥉' : ''}</span>
+              <span class="muted text-xs" style="flex-shrink: 0;">🔥 ${this.formatStreak(streakInfo.current, streakInfo.unit)}</span>
+            </div>
+            <div class="text-xs" style="margin-top: 2px; ${goalInfo.isAutonomous ? 'color: #fbbf24;' : 'color: #94a3b8;'}">
+              ${goalInfo.isAutonomous ? '🎯 Sem meta' : '🎯 Para: ' + this.escape(goalInfo.title)}
+            </div>
+            ${isConsolidated ? `
+              <div class="text-xs muted" style="margin-top: 6px;">Mantendo: execução ${tracking.adherenceRate}% · semana ${weekProgress.done}/${weekProgress.target}</div>
+            ` : `
+              <div class="habit-compact-bar"><div style="width: ${pct}%; background: ${isWarning ? '#f59e0b' : 'var(--accent)'};"></div></div>
+              <div class="text-xs" style="color: ${isWarning ? '#fbbf24' : '#94a3b8'};">
+                Dia ${tracking.daysTracked} de ${tracking.targetDays} · execução ${tracking.adherenceRate}%${isWarning ? ' · atenção' : ''}
+              </div>
+            `}
+          </div>
+          <button type="button" class="btn-icon" onclick="app.toggleHabitDetails('${h.id}')" title="${isOpen ? 'Fechar detalhes' : 'Ver detalhes'}" style="align-self: flex-start;">${isOpen ? '▴' : '▾'}</button>
+        </div>
+        ${isOpen ? `
+          <div class="habit-compact-details">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+              ${this.getHabitStatusBadgeHtml(h)}
+              ${this.getHabitDifficultyBadgeHtml(h.difficulty || 'medium')}
+              <span class="badge-pill">⏰ ${h.time || 'sem horário'}</span>
+              <span class="badge-pill">${h.weeklyFreq || 7}x/semana</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; margin-bottom: 10px;">
+              <div class="habit-mini-stat"><div class="muted text-xs">Semana</div><strong style="color: #38bdf8;">${weekProgress.done}/${weekProgress.target}</strong></div>
+              <div class="habit-mini-stat"><div class="muted text-xs">Sequência</div><strong style="color: #f59e0b;">${this.formatStreak(streakInfo.current, streakInfo.unit)}</strong></div>
+              <div class="habit-mini-stat"><div class="muted text-xs">Melhor</div><strong style="color: #34d399;">${this.formatStreak(streakInfo.best, streakInfo.unit)}</strong></div>
+            </div>
+            ${isWarning ? `<div class="habit-alert-tag" style="margin: 0 0 10px;">⚠️ Últimos 14 dias em ${tracking.recentAdherenceRate}% (a linha é 85%). Um dia ruim não apaga o caminho: volte hoje.</div>` : ''}
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="btn-action" onclick="app.editHabit('${h.id}')">✏️ Editar</button>
+              ${h.time ? `<a class="btn-action" target="_blank" rel="noopener" href="${buildGcalUrl({ title: h.name, details: 'Hábito do Privo Hábitos. Faça o check-in no app depois de concluir.', time: h.time, durationMin: 30, days })}" onclick="app.markGoogleLinked('habits', '${h.id}')">📅 Google Agenda</a>` : ''}
+              <button type="button" class="btn-action" style="color: #f87171;" onclick="app.deleteHabit('${h.id}')">🗑️ Excluir</button>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  toggleHabitDetails(habitId) {
+    this.expandedHabitId = this.expandedHabitId === habitId ? null : habitId;
+    this.renderHabits();
   }
 
   /* ------------------- ABA METAS ------------------- */
@@ -5321,24 +5307,18 @@ class AppState {
       return;
     }
 
-    // Inicializa escolhas temporárias espelhando status atual
+    // Consolidados conquistados ficam como estão; os demais: em formação (até 3) ou fila de ideias
     this.organizeChoices = {};
     let formingCount = 0;
-
-    habits.forEach((h, idx) => {
-      let initialChoice = 'forming';
-      if (h.status === 'enraizado') initialChoice = 'consolidated_1yr';
-      else if (h.status === 'formado') initialChoice = 'consolidated_90d';
-      else if (h.status === 'em formação') {
-        // Se ainda não foi classificado e é o 4º hábito, coloca como ideia para não violar limite
-        if (!this.data.hasClassifiedInitialHabits && formingCount >= 3) {
-          initialChoice = 'idea';
-        } else {
-          initialChoice = 'forming';
-          formingCount++;
-        }
+    habits.forEach(h => {
+      if (h.status === 'formado' || h.status === 'enraizado') {
+        this.organizeChoices[h.id] = 'keep';
+      } else if (formingCount < 3) {
+        this.organizeChoices[h.id] = 'forming';
+        formingCount++;
+      } else {
+        this.organizeChoices[h.id] = 'idea';
       }
-      this.organizeChoices[h.id] = initialChoice;
     });
 
     this.renderOrganizeHabitsList();
@@ -5351,92 +5331,72 @@ class AppState {
     const habits = this.data.habits || [];
 
     listEl.innerHTML = habits.map(h => {
-      const currentChoice = this.organizeChoices[h.id] || 'forming';
-      const diffLabel = h.difficulty === 'complex' ? '🔴 Complexo' : h.difficulty === 'simple' ? '🟢 Simples' : '🟡 Médio';
-
+      const choice = this.organizeChoices[h.id] || 'forming';
+      const tracking = this.calcHabitTrackingStats(h);
+      if (choice === 'keep') {
+        return `
+          <div style="background: #1e293b; border: 1px solid var(--border-dark); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+            <div style="font-weight: 700; color: #ffffff; font-size: 0.92rem;">${this.escape(h.name)}</div>
+            <span class="habit-formation-badge badge-formed">🥉 Consolidado (conquistado)</span>
+          </div>`;
+      }
       return `
-        <div style="background: #1e293b; border: 1px solid var(--border-dark); border-radius: 12px; padding: 12px; margin-bottom: 10px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <div style="font-weight: 700; color: #ffffff; font-size: 0.95rem;">${this.escape(h.name)}</div>
-            <span class="text-xs muted">${diffLabel}</span>
+        <div style="background: #1e293b; border: 1px solid ${choice === 'forming' ? 'rgba(16,185,129,0.45)' : 'var(--border-dark)'}; border-radius: 12px; padding: 12px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 8px;">
+            <div style="font-weight: 700; color: #ffffff; font-size: 0.92rem;">${this.escape(h.name)}</div>
+            <span class="muted text-xs">dia ${tracking.daysTracked} · ${tracking.adherenceRate}%</span>
           </div>
-          <div>
-            <label class="muted text-xs" style="display: block; margin-bottom: 4px;">Classificação deste hábito:</label>
-            <select class="form-control" style="background: #0f172a; font-size: 0.85rem;" onchange="app.onOrganizeSelectionChange('${h.id}', this.value, this)">
-              <option value="forming" ${currentChoice === 'forming' ? 'selected' : ''}>🌱 Em formação (máx. 3 no total)</option>
-              <option value="consolidated_1yr" ${currentChoice === 'consolidated_1yr' ? 'selected' : ''}>🏆 Já consolidado (+1 ano no automático)</option>
-              <option value="consolidated_90d" ${currentChoice === 'consolidated_90d' ? 'selected' : ''}>🥉 Já consolidado (entre 90 dias e 1 ano)</option>
-              <option value="idea" ${currentChoice === 'idea' ? 'selected' : ''}>💡 Guardar na fila de Ideias</option>
-            </select>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+            <button type="button" class="day-chip ${choice === 'forming' ? 'active' : ''}" style="text-align: center;" onclick="app.onOrganizeSelectionChange('${h.id}', 'forming')">🌱 Em formação</button>
+            <button type="button" class="day-chip ${choice === 'idea' ? 'active' : ''}" style="text-align: center;" onclick="app.onOrganizeSelectionChange('${h.id}', 'idea')">💡 Esperar na fila</button>
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
   }
 
-  onOrganizeSelectionChange(habitId, newValue, selectEl) {
+  onOrganizeSelectionChange(habitId, newValue) {
     if (newValue === 'forming') {
-      // Conta quantos já estão como forming
-      let currentForming = 0;
-      Object.keys(this.organizeChoices).forEach(id => {
-        if (id !== habitId && this.organizeChoices[id] === 'forming') currentForming++;
-      });
-
-      if (currentForming >= 3) {
-        alert('Atenção: A regra científica permite no máximo 3 hábitos em formação simultânea.\n\nPara colocar este hábito em formação, altere algum dos outros para "Já consolidado" ou "Guardar na fila de Ideias".');
-        // Reverte o select para o valor anterior
-        selectEl.value = this.organizeChoices[habitId] || 'consolidated_90d';
+      const others = Object.keys(this.organizeChoices).filter(id => id !== habitId && this.organizeChoices[id] === 'forming').length;
+      if (others >= 3) {
+        alert('Só 3 hábitos cabem em formação ao mesmo tempo.\n\nMande outro para a fila antes de colocar este.');
         return;
       }
     }
-
     this.organizeChoices[habitId] = newValue;
+    this.renderOrganizeHabitsList();
     this.updateOrganizeCounter();
   }
 
   updateOrganizeCounter() {
     const counterEl = document.getElementById('organize-forming-counter');
     if (!counterEl) return;
-    let formingCount = 0;
-    Object.values(this.organizeChoices || {}).forEach(val => {
-      if (val === 'forming') formingCount++;
-    });
-    counterEl.innerText = `Hábitos em formação: ${formingCount}/3`;
+    const formingCount = Object.values(this.organizeChoices || {}).filter(v => v === 'forming').length;
+    counterEl.innerText = `Em formação: ${formingCount} de 3 vagas`;
     counterEl.style.color = formingCount > 3 ? '#ef4444' : formingCount === 3 ? '#f59e0b' : '#10b981';
   }
 
   saveOrganizedHabits() {
-    // Valida se usuário selecionou mais de 3
-    let formingCount = 0;
-    Object.values(this.organizeChoices || {}).forEach(val => {
-      if (val === 'forming') formingCount++;
-    });
-
+    const formingCount = Object.values(this.organizeChoices || {}).filter(v => v === 'forming').length;
     if (formingCount > 3) {
-      alert('Limite excedido: apenas até 3 hábitos podem ficar em formação simultaneamente. Por favor, ajuste suas escolhas.');
+      alert('Só 3 hábitos podem ficar em formação. Mande os outros para a fila.');
       return;
     }
 
-    const habits = this.data.habits || [];
     const habitsToKeep = [];
-
-    habits.forEach(h => {
+    (this.data.habits || []).forEach(h => {
       const choice = this.organizeChoices[h.id] || 'forming';
       if (choice === 'idea') {
         if (!this.data.ideas) this.data.ideas = [];
+        // Guarda os dados do hábito para ele voltar igual quando ganhar vaga
+        const { id, name, goalId, time, weeklyFreq, days, difficulty, googleLinked } = h;
         this.data.ideas.push({
           id: 'id_' + Date.now() + Math.random().toString(36).substr(2, 4),
-          title: h.name,
-          notes: 'Transferido durante a organização de hábitos.'
+          title: name,
+          notes: 'Esperando vaga para entrar em formação.',
+          habitSnapshot: { id, name, goalId, time, weeklyFreq, days, difficulty, googleLinked }
         });
       } else {
-        if (choice === 'forming') {
-          h.status = 'em formação';
-        } else if (choice === 'consolidated_90d') {
-          h.status = 'formado';
-        } else if (choice === 'consolidated_1yr') {
-          h.status = 'enraizado';
-        }
+        if (choice === 'forming') h.status = 'em formação';
         habitsToKeep.push(h);
       }
     });
@@ -5445,7 +5405,29 @@ class AppState {
     this.data.hasClassifiedInitialHabits = true;
     this.closeModal('modal-organize-habits');
     this.save();
-    alert('Hábitos organizados com sucesso!');
+  }
+
+  // Consolidação só vale se foi conquistada: prazo da dificuldade com 85%+ de execução
+  isConsolidationEarned(h) {
+    const tracking = this.calcHabitTrackingStats(h);
+    const needed = h.status === 'enraizado' ? 365 : tracking.targetDays;
+    return tracking.daysTracked >= needed && tracking.adherenceRate >= 85;
+  }
+
+  // Corrige hábitos marcados como consolidados sem ter cumprido o prazo
+  enforceHonestStatus() {
+    let changed = false;
+    (this.data.habits || []).forEach(h => {
+      if ((h.status === 'formado' || h.status === 'enraizado') && !this.isConsolidationEarned(h)) {
+        h.status = 'em formação';
+        changed = true;
+      }
+    });
+    if (changed) this.save();
+    const forming = (this.data.habits || []).filter(h => (h.status || 'em formação') === 'em formação');
+    if (forming.length > 3) {
+      setTimeout(() => this.openOrganizeModal(), 500);
+    }
   }
 
   savePendingHabitAsIdea() {
@@ -5525,17 +5507,19 @@ class AppState {
       return;
     }
 
-    // Promove ideia para hábito
+    // Promove ideia para hábito (se veio de um hábito, volta com os mesmos dados; a formação recomeça hoje)
+    const snap = idea.habitSnapshot || {};
     this.data.habits.push({
-      id: 'h_' + Date.now(),
+      id: snap.id && !(this.data.habits || []).some(h => h.id === snap.id) ? snap.id : 'h_' + Date.now(),
       name: idea.title,
-      goalId: 'autonomous',
-      difficulty: 'medium',
-      weeklyFreq: 7,
-      days: defaultDaysForFreq(7),
+      goalId: snap.goalId || 'autonomous',
+      time: snap.time || '',
+      difficulty: snap.difficulty || 'medium',
+      weeklyFreq: snap.weeklyFreq || 7,
+      days: snap.days || defaultDaysForFreq(snap.weeklyFreq || 7),
       status: 'em formação',
       startDate: toDateKey(new Date()),
-      googleLinked: false
+      googleLinked: !!snap.googleLinked
     });
 
     // Remove da fila de ideias
@@ -5926,6 +5910,7 @@ class AppState {
         if (imported && Array.isArray(imported.habits)) {
           this.data = AppState.migrate(imported);
           this.save();
+          this.enforceHonestStatus();
           this.closeModal('modal-settings');
           alert('Backup restaurado com sucesso!');
         } else {
@@ -6204,11 +6189,7 @@ class AppState {
     this.closeModal('modal-onboarding-tour');
 
     // Ao final do tour (completo ou pulado), se existirem os 4 hábitos pré-carregados, abrir automaticamente a guia "Organizar hábitos"
-    if (!this.data.hasClassifiedInitialHabits) {
-      setTimeout(() => {
-        this.openOrganizeModal();
-      }, 350);
-    }
+    this.enforceHonestStatus();
   }
 
   /* ------------------- BLOCO 4: ÍCONE "?" POR SEÇÃO ------------------- */
@@ -6338,17 +6319,9 @@ document.addEventListener('DOMContentLoaded', () => {
   } else if (!tourSeen && hadStorageData) {
     // Marca como visto silenciosamente para usuários antigos
     localStorage.setItem('privo_tour_visto', 'true');
-    // Para usuário antigo não classificado, abre organização se necessário
-    if (!app.data.hasClassifiedInitialHabits) {
-      setTimeout(() => {
-        app.openOrganizeModal();
-      }, 400);
-    }
-  } else if (!app.data.hasClassifiedInitialHabits) {
-    setTimeout(() => {
-      app.openOrganizeModal();
-    }, 400);
   }
+  // Consolidação só por execução real; se passar de 3 em formação, pede para escolher
+  app.enforceHonestStatus();
 
   // Listener para chips de dias no modal semanal
   document.querySelectorAll('#wt-days-selector .day-chip').forEach(chip => {
